@@ -13,13 +13,20 @@ const api: AxiosInstance = axios.create({
 
 const handleApiError = (error: unknown) => {
     if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const message = error.response?.data?.error || error.message;
+
         if (error.code === 'ERR_NETWORK') {
             throw new Error('Cannot connect to server. Please ensure the server is running.');
         }
-        throw new Error(error.response?.data?.message || error.message);
+        if (status === 404) {
+            throw new Error(`Resource not found: ${message}`);
+        }
+        throw new Error(message || 'An unexpected error occurred');
     }
     throw error;
 };
+
 
 export const expenseApi = {
     async getExpenses(category?: string): Promise<Expense[]> {
@@ -40,6 +47,26 @@ export const expenseApi = {
             return response.data;
         } catch (error) {
             console.error('Error creating expense:', error);
+            throw handleApiError(error);
+        }
+    },
+
+    async updateExpense(id: string, expenseData: Partial<Expense>): Promise<Expense> {
+        try {
+            console.log('Updating expense:', { id, data: expenseData }); // Debug log
+            const response = await api.put<Expense>(`/expenses/${id}`, expenseData);
+            console.log('Update response:', response.data); // Debug log
+            return response.data;
+        } catch (error) {
+            console.error('Error updating expense:', error);
+            throw handleApiError(error);
+        }
+    },
+    async deleteExpense(id: string): Promise<void> {
+        try {
+            await api.delete(`/expenses/${id}`);
+        } catch (error) {
+            console.error('Error deleting expense:', error);
             throw handleApiError(error);
         }
     }
