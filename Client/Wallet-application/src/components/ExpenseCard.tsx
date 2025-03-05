@@ -12,7 +12,9 @@ import {
     MenuItem,
     Stack,
     Button,
-    Box
+    Box,
+    Modal,
+    Paper
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,16 +27,16 @@ interface ExpenseCardProps {
 }
 
 const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) => {
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedExpense, setEditedExpense] = useState<Expense>({ ...expense });
 
     const handleEditClick = () => {
         setEditedExpense({ ...expense });
-        setIsEditing(true);
+        setIsEditModalOpen(true);
     };
 
-    const handleCancelEdit = () => {
-        setIsEditing(false);
+    const handleCloseModal = () => {
+        setIsEditModalOpen(false);
     };
 
     const handleSaveEdit = () => {
@@ -52,7 +54,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
         changesOnly.id = expense.id;
         
         onEdit(changesOnly as Expense);
-        setIsEditing(false);
+        setIsEditModalOpen(false);
     };
 
     const handleChange = (field: keyof Expense, value: any) => {
@@ -67,15 +69,56 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
         return date.toISOString().split('T')[0];
     };
 
-    if (isEditing) {
-        return (
-            <Card sx={{ 
-                maxWidth: '450px', 
-                margin: 'auto', 
-                padding: 2, 
-                boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-            }}>
-                <CardContent>
+    return (
+        <>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" gutterBottom>
+                        {expense.title}
+                    </Typography>
+                    {expense.description && (
+                        <Typography color="textSecondary" gutterBottom>
+                            {expense.description}
+                        </Typography>
+                    )}
+                    <Typography variant="h5" color="primary" sx={{ my: 2 }}>
+                        ${expense.amount.toFixed(2)}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        Date: {new Date(expense.date).toLocaleDateString()}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        Category: {expense.category}
+                    </Typography>
+                </CardContent>
+                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                    <IconButton onClick={handleEditClick} color="primary">
+                        <EditIcon />
+                    </IconButton>
+                    <IconButton onClick={onDelete} color="error">
+                        <DeleteIcon />
+                    </IconButton>
+                </CardActions>
+            </Card>
+
+            {/* Edit Expense Modal */}
+            <Modal
+                open={isEditModalOpen}
+                onClose={handleCloseModal}
+                aria-labelledby="edit-expense-modal"
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
+                <Paper sx={{ 
+                    maxWidth: '450px', 
+                    width: '90%',
+                    padding: 2, 
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                    outline: 'none' // Removes the focus outline
+                }}>
                     <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
                         Edit Expense
                     </Typography>
@@ -134,66 +177,32 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
                             variant="outlined"
                         />
                     </Stack>
-                </CardContent>
-                <Box sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'flex-end', 
-                    gap: 1,
-                    mt: 2,
-                    pr: 2,
-                    pb: 2
-                }}>
-                    <Button 
-                        onClick={handleCancelEdit} 
-                        variant="contained" 
-                        color="error"
-                        sx={{ minWidth: '80px' }}
-                    >
-                        Cancel
-                    </Button>
-                    <Button 
-                        onClick={handleSaveEdit} 
-                        variant="contained" 
-                        color="primary"
-                        sx={{ minWidth: '80px' }}
-                    >
-                        Submit
-                    </Button>
-                </Box>
-            </Card>
-        );
-    }
-
-    return (
-        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" gutterBottom>
-                    {expense.title}
-                </Typography>
-                {expense.description && (
-                    <Typography color="textSecondary" gutterBottom>
-                        {expense.description}
-                    </Typography>
-                )}
-                <Typography variant="h5" color="primary" sx={{ my: 2 }}>
-                    ${expense.amount.toFixed(2)}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                    Date: {new Date(expense.date).toLocaleDateString()}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                    Category: {expense.category}
-                </Typography>
-            </CardContent>
-            <CardActions sx={{ justifyContent: 'flex-end' }}>
-                <IconButton onClick={handleEditClick} color="primary">
-                    <EditIcon />
-                </IconButton>
-                <IconButton onClick={onDelete} color="error">
-                    <DeleteIcon />
-                </IconButton>
-            </CardActions>
-        </Card>
+                    <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'flex-end', 
+                        gap: 1,
+                        mt: 3
+                    }}>
+                        <Button 
+                            onClick={handleCloseModal} 
+                            variant="contained" 
+                            color="error"
+                            sx={{ minWidth: '80px' }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button 
+                            onClick={handleSaveEdit} 
+                            variant="contained" 
+                            color="primary"
+                            sx={{ minWidth: '80px' }}
+                        >
+                            Submit
+                        </Button>
+                    </Box>
+                </Paper>
+            </Modal>
+        </>
     );
 };
 
