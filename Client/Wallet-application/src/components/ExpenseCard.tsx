@@ -14,7 +14,8 @@ import {
     Button,
     Box,
     Modal,
-    Paper
+    Paper,
+    InputAdornment
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,6 +31,15 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedExpense, setEditedExpense] = useState<Expense>({ ...expense });
 
+    const formatCurrency = (amount: number): string => {
+        return new Intl.NumberFormat('si-LK', {
+            style: 'currency',
+            currency: 'LKR',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(amount);
+    };
+
     const handleEditClick = () => {
         setEditedExpense({ ...expense });
         setIsEditModalOpen(true);
@@ -40,19 +50,14 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
     };
 
     const handleSaveEdit = () => {
-        // Only send the fields that have changed
         const changesOnly: Partial<Expense> = {};
-        
-        // Compare the original expense with the edited one
         Object.keys(editedExpense).forEach(key => {
             const k = key as keyof Expense;
             if (editedExpense[k] !== expense[k]) {
                 changesOnly[k] = editedExpense[k];
             }
         });
-        
         changesOnly.id = expense.id;
-        
         onEdit(changesOnly as Expense);
         setIsEditModalOpen(false);
     };
@@ -71,37 +76,56 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
 
     return (
         <>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h6" gutterBottom>
+            <Card sx={{ 
+                height: '100%', 
+                display: 'flex', 
+                flexDirection: 'column',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                '&:hover': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }
+            }}>
+                <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
                         {expense.title}
                     </Typography>
                     {expense.description && (
-                        <Typography color="textSecondary" gutterBottom>
+                        <Typography color="textSecondary" gutterBottom sx={{ mb: 2 }}>
                             {expense.description}
                         </Typography>
                     )}
-                    <Typography variant="h5" color="primary" sx={{ my: 2 }}>
-                        ${expense.amount.toFixed(2)}
+                    <Typography variant="h5" color="primary" sx={{ my: 2, fontWeight: 'medium' }}>
+                        {formatCurrency(expense.amount)}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                        Date: {new Date(expense.date).toLocaleDateString()}
+                    <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                        Date: {new Date(expense.date).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                         Category: {expense.category}
                     </Typography>
                 </CardContent>
-                <CardActions sx={{ justifyContent: 'flex-end' }}>
-                    <IconButton onClick={handleEditClick} color="primary">
+                <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
+                    <IconButton 
+                        onClick={handleEditClick} 
+                        color="primary"
+                        size="small"
+                    >
                         <EditIcon />
                     </IconButton>
-                    <IconButton onClick={onDelete} color="error">
+                    <IconButton 
+                        onClick={onDelete} 
+                        color="error"
+                        size="small"
+                    >
                         <DeleteIcon />
                     </IconButton>
                 </CardActions>
             </Card>
 
-            {/* Edit Expense Modal */}
             <Modal
                 open={isEditModalOpen}
                 onClose={handleCloseModal}
@@ -109,15 +133,17 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    p: 2
                 }}
             >
                 <Paper sx={{ 
-                    maxWidth: '450px', 
-                    width: '90%',
-                    padding: 2, 
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                    outline: 'none' // Removes the focus outline
+                    maxWidth: '500px', 
+                    width: '100%',
+                    p: 3, 
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                    borderRadius: 2,
+                    outline: 'none'
                 }}>
                     <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
                         Edit Expense
@@ -132,11 +158,11 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
                         />
 
                         <FormControl fullWidth variant="outlined">
-                            <InputLabel>Select a category</InputLabel>
+                            <InputLabel>Category</InputLabel>
                             <Select
                                 value={editedExpense.category}
                                 onChange={(e) => handleChange('category', e.target.value)}
-                                label="Select a category"
+                                label="Category"
                             >
                                 <MenuItem value="Food">Food</MenuItem>
                                 <MenuItem value="Household">Household</MenuItem>
@@ -148,13 +174,16 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
                         </FormControl>
 
                         <TextField
-                            label="Description"
+                            label="Amount"
                             fullWidth
-                            value={editedExpense.description || ''}
-                            onChange={(e) => handleChange('description', e.target.value)}
+                            type="number"
+                            value={editedExpense.amount}
+                            onChange={(e) => handleChange('amount', parseFloat(e.target.value))}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">LKR</InputAdornment>,
+                                inputProps: { min: 0, step: 0.01 }
+                            }}
                             variant="outlined"
-                            multiline
-                            rows={4}
                         />
 
                         <TextField
@@ -168,26 +197,26 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
                         />
 
                         <TextField
-                            label="Amount spent"
+                            label="Description"
                             fullWidth
-                            type="number"
-                            value={editedExpense.amount}
-                            onChange={(e) => handleChange('amount', parseFloat(e.target.value))}
-                            InputProps={{ inputProps: { min: 0, step: 0.01 } }}
+                            value={editedExpense.description || ''}
+                            onChange={(e) => handleChange('description', e.target.value)}
                             variant="outlined"
+                            multiline
+                            rows={3}
                         />
                     </Stack>
                     <Box sx={{ 
                         display: 'flex', 
                         justifyContent: 'flex-end', 
-                        gap: 1,
-                        mt: 3
+                        gap: 2,
+                        mt: 4
                     }}>
                         <Button 
                             onClick={handleCloseModal} 
-                            variant="contained" 
-                            color="error"
-                            sx={{ minWidth: '80px' }}
+                            variant="outlined" 
+                            color="inherit"
+                            sx={{ minWidth: '100px' }}
                         >
                             Cancel
                         </Button>
@@ -195,9 +224,9 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
                             onClick={handleSaveEdit} 
                             variant="contained" 
                             color="primary"
-                            sx={{ minWidth: '80px' }}
+                            sx={{ minWidth: '100px' }}
                         >
-                            Submit
+                            Save
                         </Button>
                     </Box>
                 </Paper>
