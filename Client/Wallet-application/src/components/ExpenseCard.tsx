@@ -10,12 +10,12 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Stack
+    Stack,
+    Button,
+    Box
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
 import { Expense } from '../interfaces/Expense';
 
 interface ExpenseCardProps {
@@ -49,7 +49,6 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
             }
         });
         
-        // Always include the id
         changesOnly.id = expense.id;
         
         onEdit(changesOnly as Expense);
@@ -70,17 +69,40 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
 
     if (isEditing) {
         return (
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardContent sx={{ flexGrow: 1 }}>
-                    <Stack spacing={2}>
+            <Card sx={{ 
+                maxWidth: '450px', 
+                margin: 'auto', 
+                padding: 2, 
+                boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+            }}>
+                <CardContent>
+                    <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
+                        Edit Expense
+                    </Typography>
+                    <Stack spacing={3}>
                         <TextField
                             label="Title"
                             fullWidth
                             value={editedExpense.title}
                             onChange={(e) => handleChange('title', e.target.value)}
                             variant="outlined"
-                            size="small"
                         />
+
+                        <FormControl fullWidth variant="outlined">
+                            <InputLabel>Select a category</InputLabel>
+                            <Select
+                                value={editedExpense.category}
+                                onChange={(e) => handleChange('category', e.target.value)}
+                                label="Select a category"
+                            >
+                                <MenuItem value="Food">Food</MenuItem>
+                                <MenuItem value="Household">Household</MenuItem>
+                                <MenuItem value="Transportation">Transportation</MenuItem>
+                                <MenuItem value="Entertainment">Entertainment</MenuItem>
+                                <MenuItem value="Health">Health</MenuItem>
+                                <MenuItem value="Miscellaneous">Miscellaneous</MenuItem>
+                            </Select>
+                        </FormControl>
 
                         <TextField
                             label="Description"
@@ -88,20 +110,8 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
                             value={editedExpense.description || ''}
                             onChange={(e) => handleChange('description', e.target.value)}
                             variant="outlined"
-                            size="small"
                             multiline
-                            rows={2}
-                        />
-
-                        <TextField
-                            label="Amount"
-                            fullWidth
-                            type="number"
-                            value={editedExpense.amount}
-                            onChange={(e) => handleChange('amount', parseFloat(e.target.value))}
-                            InputProps={{ inputProps: { min: 0, step: 0.01 } }}
-                            variant="outlined"
-                            size="small"
+                            rows={4}
                         />
 
                         <TextField
@@ -112,34 +122,44 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
                             onChange={(e) => handleChange('date', e.target.value)}
                             InputLabelProps={{ shrink: true }}
                             variant="outlined"
-                            size="small"
                         />
 
-                        <FormControl fullWidth variant="outlined" size="small">
-                            <InputLabel>Category</InputLabel>
-                            <Select
-                                value={editedExpense.category}
-                                onChange={(e) => handleChange('category', e.target.value)}
-                                label="Category"
-                            >
-                                <MenuItem value="Food">Food</MenuItem>
-                                <MenuItem value="Household">Household</MenuItem>
-                                <MenuItem value="Transportation">Transportation</MenuItem>
-                                <MenuItem value="Entertainment">Entertainment</MenuItem>
-                                <MenuItem value="Health">Health</MenuItem>
-                                <MenuItem value="Miscellaneous">Miscellaneous</MenuItem>
-                            </Select>
-                        </FormControl>
+                        <TextField
+                            label="Amount spent"
+                            fullWidth
+                            type="number"
+                            value={editedExpense.amount}
+                            onChange={(e) => handleChange('amount', parseFloat(e.target.value))}
+                            InputProps={{ inputProps: { min: 0, step: 0.01 } }}
+                            variant="outlined"
+                        />
                     </Stack>
                 </CardContent>
-                <CardActions sx={{ justifyContent: 'flex-end' }}>
-                    <IconButton onClick={handleSaveEdit} color="primary" title="Save">
-                        <SaveIcon />
-                    </IconButton>
-                    <IconButton onClick={handleCancelEdit} color="error" title="Cancel">
-                        <CancelIcon />
-                    </IconButton>
-                </CardActions>
+                <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'flex-end', 
+                    gap: 1,
+                    mt: 2,
+                    pr: 2,
+                    pb: 2
+                }}>
+                    <Button 
+                        onClick={handleCancelEdit} 
+                        variant="contained" 
+                        color="error"
+                        sx={{ minWidth: '80px' }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button 
+                        onClick={handleSaveEdit} 
+                        variant="contained" 
+                        color="primary"
+                        sx={{ minWidth: '80px' }}
+                    >
+                        Submit
+                    </Button>
+                </Box>
             </Card>
         );
     }

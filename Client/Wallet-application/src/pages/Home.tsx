@@ -67,7 +67,7 @@ const HomePage: React.FC = () => {
             setError(null);
             console.log('Editing expense:', updatedExpense);
             const expenseId = updatedExpense.id;
-            // Remove the id from the data being sent
+           
             const { id, ...expenseData } = updatedExpense;
             await expenseApi.updateExpense(expenseId, expenseData);
             await fetchExpenses();
@@ -108,16 +108,16 @@ const HomePage: React.FC = () => {
             flexDirection: 'column',
             alignItems: 'center',
             boxSizing: 'border-box',
-            overflow: 'hidden' // Prevent horizontal scrolling
+            overflow: 'hidden'
         }}>
             <Container 
-                maxWidth={false} // Remove the max width constraint
+                maxWidth={false} 
                 sx={{ 
                     width: '100%',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    px: { xs: 2, sm: 3, md: 4 } // Responsive padding
+                    px: { xs: 2, sm: 3, md: 4 } 
                 }}
             >
                 {error && (
@@ -129,7 +129,7 @@ const HomePage: React.FC = () => {
                 <Box sx={{ 
                     py: 4, 
                     width: '100%',
-                    maxWidth: 'lg', // Constrain the content width for readability
+                    maxWidth: 'lg', 
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center'

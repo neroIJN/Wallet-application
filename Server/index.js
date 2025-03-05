@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 const db = new Loki('expenses.db');
 const expenses = db.addCollection('expenses', { indices: ['$loki'] });
 
-// Add some initial data
+// initial data
 expenses.insert([
     {
         title: 'Test Expense',
@@ -76,35 +76,35 @@ app.post('/expenses', (req, res) => {
         res.status(500).json({ error: 'Failed to create expense' });
     }
 });
-
+// Update expense
 app.put('/expenses/:id', (req, res) => {
     try {
         const { id } = req.params;
         const updates = req.body;
         
-        console.log('Updating expense:', { id, updates }); // Debug log
+        console.log('Updating expense:', { id, updates }); 
 
-        // Convert string ID to number for LokiJS
+        
         const numericId = parseInt(id, 10);
         if (isNaN(numericId)) {
             return res.status(400).json({ error: 'Invalid ID format' });
         }
 
-        // Find expense by LokiJS ID
+        
         const expense = expenses.findOne({ $loki: numericId });
         
         if (!expense) {
-            console.log('Expense not found:', id); // Debug log
+            console.log('Expense not found:', id); 
             return res.status(404).json({ error: 'Expense not found' });
         }
 
-        // Update expense
+        
         Object.assign(expense, updates);
         expenses.update(expense);
 
-        // Return updated expense with string ID
+        
         const response = { ...expense, id: expense.$loki.toString() };
-        console.log('Updated expense:', response); // Debug log
+        console.log('Updated expense:', response); 
         res.json(response);
     } catch (error) {
         console.error('Error updating expense:', error);

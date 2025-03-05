@@ -53,9 +53,9 @@ export const expenseApi = {
 
     async updateExpense(id: string, expenseData: Partial<Expense>): Promise<Expense> {
         try {
-            console.log('Updating expense:', { id, data: expenseData }); // Debug log
+            console.log('Updating expense:', { id, data: expenseData }); 
             const response = await api.put<Expense>(`/expenses/${id}`, expenseData);
-            console.log('Update response:', response.data); // Debug log
+            console.log('Update response:', response.data); 
             return response.data;
         } catch (error) {
             console.error('Error updating expense:', error);
