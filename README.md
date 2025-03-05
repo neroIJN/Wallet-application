@@ -1,7 +1,14 @@
 # Wallet-application
 
-# npm install in the Server folder
-# npm install in the Client->Walletapplication folder
-
+How to run server
+# execute "npm install" in the Server folder
+# execute "npm run dev" in the Server folder
 # Server PORT is 5000
-# client folder is 5173
+
+How to run server
+# execute "npm install" in the Client/Wallet-application folder
+# execute "npm run dev" in the Client/Wallet-application folder
+# Server PORT is 5173
+
+
+
