@@ -68,62 +68,61 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onClose, onSubm
     };
 
     return (
-        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <Dialog 
+            open={open} 
+            onClose={handleClose} 
+            maxWidth="sm" 
+            PaperProps={{
+                style: {
+                    borderRadius: '4px',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                    width: '450px',
+                }
+            }}
+        >
             <form onSubmit={handleSubmit}>
-                <DialogTitle>Add New Expense</DialogTitle>
-                <DialogContent>
-                    <Box sx={{ mt: 2 }}>
+                <DialogTitle 
+                    sx={{ 
+                        borderBottom: '1px solid #e0e0e0',
+                        fontWeight: 'bold',
+                        fontSize: '18px',
+                        pb: 2
+                    }}
+                >
+                    Create Expense
+                </DialogTitle>
+                <DialogContent sx={{ pt: 3, pb: 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <TextField
-                            fullWidth
                             label="Title"
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                             error={!!errors.title}
                             helperText={errors.title}
-                            margin="normal"
                             required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Description"
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            margin="normal"
-                            multiline
-                            rows={2}
-                        />
-                        <TextField
-                            fullWidth
-                            type="number"
-                            label="Amount"
-                            value={formData.amount}
-                            onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
-                            error={!!errors.amount}
-                            helperText={errors.amount}
-                            margin="normal"
-                            required
+                            variant="outlined"
                             InputProps={{
-                                inputProps: { min: 0, step: 0.01 }
+                                style: { borderRadius: '4px' }
+                            }}
+                            sx={{ 
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#ccc',
+                                }
                             }}
                         />
-                        <TextField
-                            fullWidth
-                            type="date"
-                            label="Date"
-                            value={formData.date}
-                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                            error={!!errors.date}
-                            helperText={errors.date}
-                            margin="normal"
-                            required
-                            InputLabelProps={{ shrink: true }}
-                        />
-                        <FormControl fullWidth margin="normal" required error={!!errors.category}>
-                            <InputLabel>Category</InputLabel>
+                        
+                        <FormControl required error={!!errors.category}>
+                            <InputLabel>Select a category</InputLabel>
                             <Select
                                 value={formData.category}
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                label="Category"
+                                label="Select a category"
+                                sx={{ 
+                                    borderRadius: '4px',
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: '#ccc',
+                                    }
+                                }}
                             >
                                 <MenuItem value="Food">Food</MenuItem>
                                 <MenuItem value="Household">Household</MenuItem>
@@ -133,12 +132,104 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onClose, onSubm
                                 <MenuItem value="Miscellaneous">Miscellaneous</MenuItem>
                             </Select>
                         </FormControl>
+                        
+                        <TextField
+                            label="Description"
+                            value={formData.description}
+                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            multiline
+                            rows={4}
+                            variant="outlined"
+                            InputProps={{
+                                style: { borderRadius: '4px' }
+                            }}
+                            sx={{ 
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#ccc',
+                                }
+                            }}
+                        />
+                        
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                            <TextField
+                                type="date"
+                                label="Date"
+                                value={formData.date}
+                                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                error={!!errors.date}
+                                helperText={errors.date}
+                                required
+                                InputLabelProps={{ shrink: true }}
+                                fullWidth
+                                variant="outlined"
+                                InputProps={{
+                                    style: { borderRadius: '4px' }
+                                }}
+                                sx={{ 
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: '#ccc',
+                                    }
+                                }}
+                            />
+                            
+                            <TextField
+                                type="number"
+                                label="Amount spent"
+                                value={formData.amount === 0 ? '' : formData.amount}
+                                onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
+                                error={!!errors.amount}
+                                helperText={errors.amount}
+                                required
+                                fullWidth
+                                variant="outlined"
+                                InputProps={{
+                                    inputProps: { min: 0, step: 0.01 },
+                                    style: { borderRadius: '4px' }
+                                }}
+                                sx={{ 
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: '#ccc',
+                                    }
+                                }}
+                            />
+                        </Box>
                     </Box>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button type="submit" variant="contained" color="primary">
-                        Add Expense
+                <DialogActions sx={{ 
+                    borderTop: '1px solid #e0e0e0',
+                    padding: '16px 24px',
+                    justifyContent: 'flex-end',
+                    gap: 1
+                }}>
+                    <Button 
+                        onClick={handleClose}
+                        sx={{ 
+                            backgroundColor: '#dc3545',
+                            color: 'white',
+                            '&:hover': {
+                                backgroundColor: '#c82333',
+                            },
+                            borderRadius: '4px',
+                            textTransform: 'none',
+                            px: 3
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button 
+                        type="submit" 
+                        sx={{ 
+                            backgroundColor: '#0066cc',
+                            color: 'white',
+                            '&:hover': {
+                                backgroundColor: '#0052a3',
+                            },
+                            borderRadius: '4px',
+                            textTransform: 'none',
+                            px: 3
+                        }}
+                    >
+                        Submit
                     </Button>
                 </DialogActions>
             </form>
