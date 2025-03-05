@@ -78,21 +78,51 @@ const HomePage: React.FC = () => {
             minHeight: '100vh',
             backgroundColor: '#ffffff',
             margin: 0,
-            padding: 0
+            padding: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
         }}>
-            <Container maxWidth="lg">
+            <Container 
+                maxWidth="lg" 
+                sx={{ 
+                    backgroundColor: '#ffffff',
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}
+            >
                 {error && (
-                    <Alert severity="error" sx={{ mb: 2, mt: 2 }}>
+                    <Alert severity="error" sx={{ width: '100%', mb: 2, mt: 2 }}>
                         {error}
                     </Alert>
                 )}
 
-                <Box sx={{ py: 4 }}>
-                    <Typography variant="h4" component="h1" gutterBottom align="center">
+                <Box sx={{ 
+                    py: 4, 
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}>
+                    <Typography 
+                        variant="h4" 
+                        component="h1" 
+                        gutterBottom 
+                        align="center"
+                        sx={{ mb: 4 }}
+                    >
                         Expense Tracker
                     </Typography>
 
-                    <Paper sx={{ p: 3, mb: 4 }}>
+                    <Paper sx={{ 
+                        p: 3, 
+                        mb: 4, 
+                        width: '100%',
+                        backgroundColor: '#ffffff',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}>
                         <Grid container spacing={3} alignItems="center">
                             <Grid item xs={12} md={4}>
                                 <FormControl fullWidth>
@@ -101,6 +131,7 @@ const HomePage: React.FC = () => {
                                         value={selectedCategory}
                                         onChange={handleCategoryChange}
                                         label="Category"
+                                        sx={{ backgroundColor: '#ffffff' }}
                                     >
                                         <MenuItem value="">All Categories</MenuItem>
                                         <MenuItem value="Food">Food</MenuItem>
@@ -127,28 +158,30 @@ const HomePage: React.FC = () => {
                         </Grid>
                     </Paper>
 
-                    {loading ? (
-                        <Box display="flex" justifyContent="center" my={4}>
-                            <CircularProgress />
-                        </Box>
-                    ) : expenses.length === 0 ? (
-                        <Box textAlign="center" my={4}>
-                            <Typography variant="h6" color="textSecondary">
-                                No expenses found
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Grid container spacing={3}>
-                            {expenses.map((expense) => (
-                                <Grid item xs={12} sm={6} md={4} key={expense.id}>
-                                    <ExpenseCard 
-                                        expense={expense}
-                                        onDelete={() => handleDeleteExpense(expense.id)}
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
-                    )}
+                    <Box sx={{ width: '100%' }}>
+                        {loading ? (
+                            <Box display="flex" justifyContent="center" my={4}>
+                                <CircularProgress />
+                            </Box>
+                        ) : expenses.length === 0 ? (
+                            <Box textAlign="center" my={4}>
+                                <Typography variant="h6" color="textSecondary">
+                                    No expenses found
+                                </Typography>
+                            </Box>
+                        ) : (
+                            <Grid container spacing={3}>
+                                {expenses.map((expense) => (
+                                    <Grid item xs={12} sm={6} md={4} key={expense.id}>
+                                        <ExpenseCard 
+                                            expense={expense}
+                                            onDelete={() => handleDeleteExpense(expense.id)}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        )}
+                    </Box>
                 </Box>
 
                 <AddExpenseModal
