@@ -8,7 +8,7 @@ const port = 5000;
 
 // Configure CORS
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: ['http://localhost:5173'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
@@ -66,7 +66,7 @@ app.post('/expenses', (req, res) => {
             amount: Number(amount),
             date,
             category
-        });
+        }); // adding the new document to the collection
 
         const response = { ...newExpense, id: newExpense.$loki.toString() };
         console.log('Created expense:', response);
