@@ -14,7 +14,7 @@ import {
     Alert,
     Typography
 } from '@mui/material';
-import { expenseApi } from '../apiService';
+import { expenseApi } from '../services/apiService.ts';
 import { Expense } from '../interfaces/Expense';
 import ExpenseCard from '../components/ExpenseCard';
 import AddExpenseModal from '../components/AddExpenseModal';

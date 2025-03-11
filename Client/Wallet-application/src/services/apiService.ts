@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { Expense } from './interfaces/Expense';
+import { Expense } from '../interfaces/Expense.ts';
 
 const BASE_URL = 'http://localhost:5000';
 
